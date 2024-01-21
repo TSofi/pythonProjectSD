@@ -1,13 +1,10 @@
 import tkinter as tk
 from tkinter import font, ttk, messagebox
-
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-
 from PatientDatabse import *
 from PatientProfile import *
 from analyse import *
-
 
 class CreatePatientApp:
     def __init__(self, master, db):
@@ -32,8 +29,18 @@ class CreatePatientApp:
                                foreground="White")
         title_label.grid(row=0, column=0, columnspan=3, pady=5, sticky=tk.N + tk.S + tk.E + tk.W)
 
-        # Lables for Rows
+        # Labels for Rows
         labels = ["Doctors ID:", "Full name:", "Pesel:", "Age:", "Sex:", "Disease:", "Medication:"]
+
+        # Disease Option List
+        file_dis_list = []
+
+        with open('disease.txt', 'r') as file_dis:
+            for dis in file_dis:
+                elements = dis.strip().split(', ')
+                file_dis_list.extend(elements)
+
+        print(file_dis_list)
 
         # Loops to adjust labels in window/root
         # Columns
@@ -53,7 +60,6 @@ class CreatePatientApp:
         self.entry_full_name = tk.Entry(master, width=entry_width)
         self.entry_pesel = tk.Entry(master, width=entry_width)
         self.entry_age = tk.Entry(master, width=entry_width)
-        self.entry_disease = tk.Entry(master, width=entry_width)
         self.entry_medication = tk.Entry(master, width=entry_width)
 
         # Combobox - sex optional
@@ -62,6 +68,11 @@ class CreatePatientApp:
         self.sex_combobox = ttk.Combobox(master, textvariable=self.sex_st, values=self.sex_options, state="readonly",
                                          width=38)
 
+        # Combobox - disease
+        self.disease_options = file_dis_list
+        self.dis_st = tk.StringVar()
+        self.dis_combobox = ttk.Combobox(master, textvariable=self.dis_st, values=self.disease_options, state="normal",
+                                         width=38)
         # Create menu bar
         menu = tk.Menu(master)
         master.config(menu=menu)
@@ -73,16 +84,47 @@ class CreatePatientApp:
         menu.add_cascade(label='Statistics', menu=statistics_menu)
         statistics_menu.add_command(label='Yearly Submitted Patients', command=self.open_yearly_statistics_window)
         statistics_menu.add_command(label='Statistic Patients Sex', command=self.open_statistic_patients_sex_window)
+        statistics_menu.add_command(label='Disease Frequency', command=self.open_disease_frequency_window)
 
         # Placing Entry boxes and combobox(sex) in rows
         for i, entry_widget in enumerate(
                 [self.entry_doctors_id, self.entry_full_name, self.entry_pesel, self.entry_age, self.sex_combobox,
-                 self.entry_disease, self.entry_medication]):
+                 self.dis_combobox, self.entry_medication]):
             entry_widget.grid(row=i + 1, column=1, padx=10, pady=2)
 
         # Creating button to insert values to database
         insert_button = tk.Button(master, text="Insert Data", command=self.check_inserted_data)
         insert_button.grid(row=(len(labels) + 1), column=1, padx=5, pady=10)
+
+    def check_inserted_data(self):
+        """
+        Inserts the data into the database, function inherits function insert_data_database from class PatientDatabase
+                and values specified in Entry
+        """
+        # Assigning values using .get() from window's entries
+        full_name = self.entry_full_name.get()
+        pesel = self.entry_pesel.get()
+        age = self.entry_age.get()
+        sex = self.sex_st.get()
+        disease = self.dis_combobox.get()
+        medication = self.entry_medication.get()
+        doctors_id = self.entry_doctors_id.get()
+
+        # Checking if all necessary fields are filed
+        if not all((full_name, pesel, age, sex)):
+            messagebox.showinfo("Error", "Full Name, PESEL, Age and Sex must be field")
+            return
+
+        # Checking PESEL as it is primary key (most important value)
+        if len(pesel) != 11:
+            messagebox.showerror("Error", "Invalid Pesel")
+
+        # If everything checks inserting values using insert_data_database function class PatientDatabase
+        if disease != self.disease_options:
+            messagebox.showerror("Error", "Unable to add disease, disease not on the list")
+        else:
+            patient = PatientProfile(full_name, pesel, age, sex, disease, medication, doctors_id)
+            self.db.insert_data_database(patient)
 
     def open_yearly_statistics_window(self):
 
@@ -116,7 +158,7 @@ class CreatePatientApp:
         sex_window = tk.Toplevel(self.master)
         sex_window.title("Gender Distribution")
         sex_window.geometry('500x500')
-        fig, axis = plt.subplots(figsize=(10,10))
+        fig, axis = plt.subplots(figsize=(4, 6))
         genders = list(gender_stats.keys())
         counts = list(gender_stats.values())
 
@@ -127,36 +169,28 @@ class CreatePatientApp:
 
         canvas = FigureCanvasTkAgg(fig, master=sex_window)
         canvas.draw()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand =1)
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-    def check_inserted_data(self):
-        """
-        Inserts the data into the database, function inherits function insert_data_database from class PatientDatabase
-                and values specified in Entry
-        """
-        # Assigning values using .get() from window's entries
-        full_name = self.entry_full_name.get()
-        pesel = self.entry_pesel.get()
-        age = self.entry_age.get()
-        sex = self.sex_st.get()
-        disease = self.entry_disease.get()
-        medication = self.entry_medication.get()
-        doctors_id = self.entry_doctors_id.get()
+    def open_disease_frequency_window (self):
 
-        # Checking if all necessary fields are filed
-        if not all((full_name, pesel, age, sex)):
-            messagebox.showinfo("Error", "Full Name, PESEL, Age and Sex must be field")
-            return
+        data = self.db.get_all_data()
+        dis_freq_window = calculate_disease_frequency(data)
 
-        # Checking PESEL as it is primary key (most important value)
-        if len(pesel) != 11:
-            messagebox.showerror("Error", "Invalid Pesel")
+        dis_window = tk.Toplevel(self.master)
+        dis_window.title("Frequency of Disease Appearance")
+        dis_window.geometry('500x500')
+        fig, axis = plt.subplots(figsize=(4, 6))
+        frq = list(dis_freq_window.keys())
+        counts = list(dis_freq_window.values())
 
-        # If everything checks inserting values using insert_data_database function class PatientDatabase
-        else:
-            patient = PatientProfile(full_name, pesel, age, sex, disease, medication, doctors_id)
-            self.db.insert_data_database(patient)
+        axis.bar(frq, counts)
+        axis.set_xlabel('Disease')
+        axis.set_ylabel('Count')
+        axis.set_title('Frequency of Disease Appearance')
 
+        canvas = FigureCanvasTkAgg(fig, master=dis_window)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
 if __name__ == "__main__":
     db = PatientDatabase(r"C:\Studia\patientDatabase.db")
