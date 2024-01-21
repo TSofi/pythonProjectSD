@@ -3,17 +3,17 @@ import matplotlib.pyplot as mtp
 import sqlite3
 
 def calculate_yearly_regist_stats(data):
-    yearly_stats = Counter(patient["registration_date"].split("-")[0] for patient in data)
+    yearly_stats = Counter(patient["add_data"].split("-")[0] for patient in data)
     return yearly_stats
 
-def plot_yearly_registration_stats(stats):
-    years = list(stats.keys())
-    counts = list(stats.values())
-    mtp.bar(years, counts)
-    mtp.xlabel("Year")
-    mtp.ylabel("Number of Registrations")
-    mtp.title("Yearly Patient Registrations")
-    mtp.show()
+# def plot_yearly_registration_stats(stats):
+#     years = list(stats.keys())
+#     counts = list(stats.values())
+#     mtp.bar(years, counts)
+#     mtp.xlabel("Year")
+#     mtp.ylabel("Number of Registrations")
+#     mtp.title("Yearly Patient Registrations")
+#     mtp.show()
 
 def calculate_disease_frequency(data):
     diseases = [patient["disease"] for patient in data]
@@ -56,13 +56,13 @@ if __name__ == "__main__":
     all_patients = fetch_all_patients(db_file)
 
 
-    yearly_stats = calculate_yearly_regist_stats(all_patients)
-    plot_yearly_registration_stats(yearly_stats)
+    # yearly_stats = calculate_yearly_regist_stats(all_patients)
+    # plot_yearly_registration_stats(yearly_stats)
 
 
     disease_stats = calculate_disease_frequency(all_patients)
     plot_disease_frequency(disease_stats)
 
-    
+
     gender_stats = calculate_gender_distribution(all_patients)
     plot_gender_distribution(gender_stats)
