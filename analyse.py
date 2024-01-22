@@ -51,18 +51,4 @@ def fetch_all_patients(db_file):
     connection.close()
     return patients
 
-if __name__ == "__main__":
-    db_file = r"C:\Studia\patientDatabase.db"
-    all_patients = fetch_all_patients(db_file)
 
-
-    yearly_stats = calculate_yearly_regist_stats(all_patients)
-    plot_yearly_registration_stats(yearly_stats)
-
-
-    disease_stats = calculate_disease_frequency(all_patients)
-    plot_disease_frequency(disease_stats)
-
-
-    gender_stats = calculate_gender_distribution(all_patients)
-    plot_gender_distribution(gender_stats)
