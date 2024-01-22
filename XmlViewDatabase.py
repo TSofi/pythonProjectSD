@@ -120,8 +120,9 @@ class CreatePatientApp:
             messagebox.showerror("Error", "Invalid Pesel")
 
         # If everything checks inserting values using insert_data_database function class PatientDatabase
-        if disease is not self.disease_options:
+        if disease not in self.disease_options:
             messagebox.showerror("Error", "Unable to add disease, disease not on the list")
+
         else:
             patient = PatientProfile(full_name, pesel, age, sex, disease, medication, doctors_id)
             self.db.insert_data_database(patient)
