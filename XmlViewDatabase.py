@@ -194,7 +194,7 @@ class CreatePatientApp:
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
 if __name__ == "__main__":
-    db = PatientDatabase(r"C:\Studia\patientDatabase.db")
+    db = PatientDatabase(r"patientDatabase.db")
     db.create_table()
 
     window = tk.Tk()
