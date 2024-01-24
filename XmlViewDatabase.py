@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import font, ttk, messagebox
+from tkinter import font, ttk, messagebox, simpledialog
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from PatientDatabse import *
@@ -16,6 +16,7 @@ class CreatePatientApp:
 
         Returns view window with filedes to assign values to table (db)
         """
+
         self.master = master
         self.master.title("Patients")
         self.master.geometry("600x550")
@@ -96,6 +97,14 @@ class CreatePatientApp:
         insert_button = tk.Button(master, text="Insert Data", command=self.check_inserted_data)
         insert_button.grid(row=(len(labels) + 1), column=1, padx=5, pady=10)
 
+        # button for searching by pesel:
+        search_button = tk.Button(master, text="Search by PESEL", command=self.search_patient_by_pesel)
+        search_button.grid(row=(len(labels) + 2), column=1, padx=5, pady=10)
+
+        # button for clearing patient info
+        clear_button = tk.Button(master, text="Clear Patient Info", command=self.clear_patient_info)
+        clear_button.grid(row=(len(labels) + 3), column=1, padx=5, pady=10)
+
     def check_inserted_data(self):
         """
         Inserts the data into the database, function inherits function insert_data_database from class PatientDatabase
@@ -126,6 +135,9 @@ class CreatePatientApp:
         else:
             patient = PatientProfile(full_name, pesel, age, sex, disease, medication, doctors_id)
             self.db.insert_data_database(patient)
+
+            # Toast message for successful insertion
+            messagebox.showinfo("Success", "Everything is good! Data is inserted")
 
     def open_yearly_statistics_window(self):
 
@@ -193,6 +205,25 @@ class CreatePatientApp:
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
+    def search_patient_by_pesel(self):
+        pesel_to_search = simpledialog.askstring("Search", "Enter PESEL to search:")
+        if pesel_to_search:
+            patient_data = self.db.get_patient_by_pesel(pesel_to_search)
+            if patient_data:
+                messagebox.showinfo("Search Result", f"Patient found:\n{patient_data}")
+            else:
+                messagebox.showinfo("Search Result", "Patient not found.")
+
+    def clear_patient_info(self):
+        # clear box with data
+        self.entry_full_name.delete(0, tk.END)
+        self.entry_pesel.delete(0, tk.END)
+        self.entry_age.delete(0, tk.END)
+        self.sex_combobox.set('')
+        self.dis_combobox.set('')
+        self.entry_medication.delete(0, tk.END)
+
+
 if __name__ == "__main__":
     db = PatientDatabase(r"patientDatabase.db")
     db.create_table()
@@ -200,3 +231,5 @@ if __name__ == "__main__":
     window = tk.Tk()
     app = CreatePatientApp(window, db)
     window.mainloop()
+
+

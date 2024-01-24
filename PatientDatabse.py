@@ -92,3 +92,29 @@ class PatientDatabase:
                 print("Fetal to fetch data")
             finally:
                 connection.close()
+
+    def get_patient_by_pesel(self, pesel):
+        """
+        Retrieves patient data by PESEL from the database
+        Param:
+             - pesel {string} - PESEL value to search for
+        Returns:
+            - patient_data  - Patient data if existed, None otherwise
+        """
+        connection = self.create_connection()
+
+        if connection is not None:
+            try:
+                cursor = connection.cursor()
+                cursor.execute("SELECT * FROM patientProfiles WHERE pesel=?", (pesel,))
+                patient_data = cursor.fetchone()
+
+                if patient_data:
+                    columns = [desc[0] for desc in cursor.description]
+                    return dict(zip(columns, patient_data))
+                else:
+                    return None
+            except Error as error:
+                print("Failed to fetch data by PESEL:", error)
+            finally:
+                connection.close()
