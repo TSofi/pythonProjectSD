@@ -1,3 +1,9 @@
+
+"""
+Class Creates PatientProfile object
+"""
+
+
 class PatientProfile:
     """
         This class crates PatientProfile objects, further to be placed in database

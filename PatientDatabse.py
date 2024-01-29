@@ -1,6 +1,19 @@
 import sqlite3
+import unittest
 from aifc import Error
 from datetime import datetime
+from PatientProfile import *
+
+"""
+Class PatientDatabase crates Database using sqlite3
+Referances:
+Python Documentation - https://docs.python.org/3/library/sqlite3.html
+Tutorials Point - https://www.tutorialspoint.com/sqlite/sqlite_python.htm
+GeeksforGeeks - https://www.geeksforgeeks.org/python-sqlite/
+
+"""
+
+
 class PatientDatabase:
 
     def __init__(self, db_file):
@@ -23,7 +36,7 @@ class PatientDatabase:
     def create_table(self):
         """
         Creates table for PatientProfile objects using sqlite database
-        Returns table for PatientProfile objects
+        Returns None
         """
 
         connection = self.create_connection()
@@ -53,8 +66,8 @@ class PatientDatabase:
         """
         Inserts data to table for PatientProfile objects
             Arguments:
-                 - patient {string} - object of PatientProfile class
-        Returns table with inserted object's values
+                 - patient (PatientProfile) - object of PatientProfile class
+        Returns None
         """
         connection = sqlite3.connect(self.db_file)
 
@@ -77,6 +90,11 @@ class PatientDatabase:
 
     def get_all_data(self):
 
+        """
+        Retrieves all data from the table for PatientProfile objects
+
+        Returns all data from the table for PatientProfile
+        """
         connection = sqlite3.connect(self.db_file)
 
         if connection is not None:
@@ -97,7 +115,7 @@ class PatientDatabase:
         """
         Retrieves patient data by PESEL from the database
         Param:
-             - pesel {string} - PESEL value to search for
+             - pesel (string) - PESEL value to search for
         Returns:
             - patient_data  - Patient data if existed, None otherwise
         """
@@ -118,3 +136,34 @@ class PatientDatabase:
                 print("Failed to fetch data by PESEL:", error)
             finally:
                 connection.close()
+
+
+class TestPatientDatabase(unittest.TestCase):
+
+    def setUp(self):
+        self.db = PatientDatabase("test_patient_database")
+        self.db.create_table()
+        self.patient = PatientProfile("Jan Kowalski", "12345678900", "25", "Male", "Sick", "Drug", "D1234")
+
+    def test_insert_patient_data(self):
+        # pesel is unique that is why we cannot run test twice when insert_data... is not commented out
+        #self.db.insert_data_database(self.patient)
+        result = self.db.get_all_data()
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]['full_name'], "Jan Kowalski")
+        self.assertEqual(result[0]['pesel'], "12345678900")
+
+    def test_get_patient_by_pesel(self):
+        result_pesel = self.db.get_patient_by_pesel('12345678900')
+        self.assertEqual(result_pesel['full_name'], 'Jan Kowalski')
+
+    def test_get_all_data(self):
+
+        result = self.db.get_all_data()
+        self.assertEqual(len(result),1)
+        self.assertEqual(result[0]['full_name'], "Jan Kowalski")
+
+
+if __name__ == '__main__':
+    unittest.main()
+
