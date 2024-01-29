@@ -1,10 +1,21 @@
 import tkinter as tk
 from tkinter import font, ttk, messagebox, simpledialog
+
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 from PatientDatabse import *
 from PatientProfile import *
 from analyse import *
+
+"""
+This program is used to create user's GUI
+References:
+- Python documentation for tkinter- https://docs.python.org/3/library/tkinter.html
+- GeeksForGeeks.html for widgets - https://www.geeksforgeeks.org/what-are-widgets-in-tkinter/?ref=lbp
+- RealPython - https://realpython.com/python-gui-tkinter/
+"""
+
 
 class CreatePatientApp:
     def __init__(self, master, db):
@@ -40,8 +51,6 @@ class CreatePatientApp:
             for dis in file_dis:
                 elements = dis.strip().split(', ')
                 file_dis_list.extend(elements)
-
-        print(file_dis_list)
 
         # Loops to adjust labels in window/root
         # Columns
@@ -165,6 +174,11 @@ class CreatePatientApp:
 
     def open_statistic_patients_sex_window(self):
 
+        """
+               Opens the statistic_patients_sex_window widget and displays vertical
+               bar graph with statistical sex o patients
+        """
+
         data = self.db.get_all_data()
         gender_stats = calculate_gender_distribution(data)
 
@@ -184,7 +198,13 @@ class CreatePatientApp:
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-    def open_disease_frequency_window (self):
+    def open_disease_frequency_window(self):
+
+        """
+            Opens the disease_frequency_window widget and displays vertical
+            bar graph with statistical of disease appearance
+
+        """
 
         data = self.db.get_all_data()
         dis_freq_window = calculate_disease_frequency(data)
@@ -206,6 +226,9 @@ class CreatePatientApp:
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
     def search_patient_by_pesel(self):
+        """
+        Search patients by Pesel returns existing patient form table patientDatabase
+        """
         pesel_to_search = simpledialog.askstring("Search", "Enter PESEL to search:")
         if pesel_to_search:
             patient_data = self.db.get_patient_by_pesel(pesel_to_search)
@@ -215,6 +238,9 @@ class CreatePatientApp:
                 messagebox.showinfo("Search Result", "Patient not found.")
 
     def clear_patient_info(self):
+        """
+        Clear patient clears fields in gui, but doctors id
+        """
         # clear box with data
         self.entry_full_name.delete(0, tk.END)
         self.entry_pesel.delete(0, tk.END)
@@ -226,10 +252,7 @@ class CreatePatientApp:
 
 if __name__ == "__main__":
     db = PatientDatabase(r"patientDatabase.db")
-    db.create_table()
 
     window = tk.Tk()
     app = CreatePatientApp(window, db)
     window.mainloop()
-
-
