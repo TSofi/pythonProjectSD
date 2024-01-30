@@ -18,6 +18,8 @@ References:
 
 
 class CreatePatientApp:
+
+    # Damian Stępień
     def __init__(self, master, db):
         """
         Constructor Create Patient App view window (displays after running)
@@ -106,14 +108,17 @@ class CreatePatientApp:
         insert_button = tk.Button(master, text="Insert Data", command=self.check_inserted_data)
         insert_button.grid(row=(len(labels) + 1), column=1, padx=5, pady=10)
 
+        # Sofia Tretiak
         # button for searching by pesel:
         search_button = tk.Button(master, text="Search by PESEL", command=self.search_patient_by_pesel)
         search_button.grid(row=(len(labels) + 2), column=1, padx=5, pady=10)
 
+        # Sofia Tretiak
         # button for clearing patient info
         clear_button = tk.Button(master, text="Clear Patient Info", command=self.clear_patient_info)
         clear_button.grid(row=(len(labels) + 3), column=1, padx=5, pady=10)
 
+    # Damian Stępień
     def check_inserted_data(self):
         """
         Inserts the data into the database, function inherits function insert_data_database from class PatientDatabase
@@ -148,6 +153,7 @@ class CreatePatientApp:
             # Toast message for successful insertion
             messagebox.showinfo("Success", "Everything is good! Data is inserted")
 
+    # Damian Stępień
     def open_yearly_statistics_window(self):
 
         """
@@ -172,6 +178,7 @@ class CreatePatientApp:
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
+    # Damian Stępień
     def open_statistic_patients_sex_window(self):
 
         """
@@ -198,6 +205,7 @@ class CreatePatientApp:
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
+    # Damian Stępień
     def open_disease_frequency_window(self):
 
         """
@@ -225,6 +233,7 @@ class CreatePatientApp:
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
+    # Sofia Tretiak
     def search_patient_by_pesel(self):
         """
         Search patients by Pesel returns existing patient form table patientDatabase
@@ -237,6 +246,7 @@ class CreatePatientApp:
             else:
                 messagebox.showinfo("Search Result", "Patient not found.")
 
+    # Sofia Tretiak
     def clear_patient_info(self):
         """
         Clear patient clears fields in gui, but doctors id

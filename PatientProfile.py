@@ -3,7 +3,7 @@
 Class Creates PatientProfile object
 """
 
-
+# Damian Stępień
 class PatientProfile:
     """
         This class crates PatientProfile objects, further to be placed in database

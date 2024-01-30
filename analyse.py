@@ -1,7 +1,10 @@
-from collections import Counter
-import matplotlib.pyplot as mtp
 import sqlite3
+from collections import Counter
 
+import matplotlib.pyplot as mtp
+
+
+# Sofia Tretiak
 def calculate_yearly_regist_stats(data):
     """
     Function calculates yearly registration statistic based on patientDatabase
@@ -12,6 +15,8 @@ def calculate_yearly_regist_stats(data):
     yearly_stats = Counter(patient["add_data"].split("-")[0] for patient in data)
     return yearly_stats
 
+
+# Sofia Tretiak
 def plot_yearly_registration_stats(stats):
     """
     Function plots yearly registration statistic based on stats from calculate yearly registration
@@ -27,6 +32,8 @@ def plot_yearly_registration_stats(stats):
     mtp.title("Yearly Patient Registrations")
     mtp.show()
 
+
+# Sofia Tretiak
 def calculate_disease_frequency(data):
     """
     Function calculates frequency of appearance of patients diseases
@@ -38,6 +45,8 @@ def calculate_disease_frequency(data):
     disease_counts = Counter(diseases)
     return disease_counts
 
+
+# Sofia Tretiak
 def plot_disease_frequency(stats):
     """
     function plots frequency of appearance of patients disease from calculate_disease_frequency
@@ -54,6 +63,8 @@ def plot_disease_frequency(stats):
     mtp.xticks(rotation=45, ha="right")
     mtp.show()
 
+
+# Sofia Tretiak
 def calculate_gender_distribution(data):
     """
     Function calculates gender distribution of patients based on database
@@ -65,6 +76,8 @@ def calculate_gender_distribution(data):
     gender_counts = Counter(genders)
     return gender_counts
 
+
+# Sofia Tretiak
 def plot_gender_distribution(stats):
     """
     Function plots gender distribution of patients based on calculate_gender_distribution
@@ -79,6 +92,8 @@ def plot_gender_distribution(stats):
     mtp.title("Gender Distribution of Patients")
     mtp.show()
 
+
+# Sofia Tretiak
 def fetch_all_patients(db_file):
     connection = sqlite3.connect(db_file)
     cursor = connection.cursor()
@@ -86,5 +101,3 @@ def fetch_all_patients(db_file):
     patients = cursor.fetchall()
     connection.close()
     return patients
-
-
