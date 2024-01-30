@@ -13,7 +13,7 @@ GeeksforGeeks - https://www.geeksforgeeks.org/python-sqlite/
 
 """
 
-
+# Damian Stępień
 class PatientDatabase:
 
     def __init__(self, db_file):
@@ -33,6 +33,7 @@ class PatientDatabase:
             error = "Not able to connect"
             print(error)
 
+    # Damian Stępień
     def create_table(self):
         """
         Creates table for PatientProfile objects using sqlite database
@@ -61,6 +62,7 @@ class PatientDatabase:
             finally:
                 connection.close()
 
+    # Damian Stępień
     def insert_data_database(self, patient):
 
         """
@@ -88,6 +90,7 @@ class PatientDatabase:
             finally:
                 pass
 
+    # Damian Stępień
     def get_all_data(self):
 
         """
@@ -111,6 +114,7 @@ class PatientDatabase:
             finally:
                 connection.close()
 
+    # Sofia Tretiak
     def get_patient_by_pesel(self, pesel):
         """
         Retrieves patient data by PESEL from the database
@@ -139,12 +143,13 @@ class PatientDatabase:
 
 
 class TestPatientDatabase(unittest.TestCase):
-
+    # Damian Stępień
     def setUp(self):
         self.db = PatientDatabase("test_patient_database")
         self.db.create_table()
         self.patient = PatientProfile("Jan Kowalski", "12345678900", "25", "Male", "Sick", "Drug", "D1234")
 
+    # Damian Stępień
     def test_insert_patient_data(self):
         # pesel is unique that is why we cannot run test twice when insert_data... is not commented out
         #self.db.insert_data_database(self.patient)
@@ -153,10 +158,12 @@ class TestPatientDatabase(unittest.TestCase):
         self.assertEqual(result[0]['full_name'], "Jan Kowalski")
         self.assertEqual(result[0]['pesel'], "12345678900")
 
+    # Damian Stępień
     def test_get_patient_by_pesel(self):
         result_pesel = self.db.get_patient_by_pesel('12345678900')
         self.assertEqual(result_pesel['full_name'], 'Jan Kowalski')
 
+    # Damian Stępień
     def test_get_all_data(self):
 
         result = self.db.get_all_data()
